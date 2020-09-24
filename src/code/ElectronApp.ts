@@ -1,8 +1,10 @@
 // tslint:disable/tslint:enable awaits you
-import { app, BrowserWindow, ipcMain } from 'electron';
+import {app, BrowserWindow, ipcMain, Menu} from 'electron';
 
 import * as url from 'url';
 import * as path from 'path';
+import {Lang} from "./Lang";
+import {ElectronUtil} from "./ElectronUtil";
 
 export class ElectronApp {
   public mainWindow:BrowserWindow;
@@ -10,10 +12,12 @@ export class ElectronApp {
 
   constructor () {
     this.app = app
+    this.app["clazz"] = this
   }
 
-
   createWindow () {
+    const clazz = this["clazz"];
+
     this.mainWindow = new BrowserWindow({
       width: 800,
       height: 600,
@@ -32,6 +36,8 @@ export class ElectronApp {
 
     this.mainWindow.webContents.openDevTools();
 
+    ElectronUtil.disableAllStandardShortcuts();
+
     this.mainWindow.webContents.on('did-finish-load', () => {
       this.mainWindow.webContents.send('test','This is a test');
     });
@@ -49,8 +55,15 @@ export class ElectronApp {
     })
   }
 
+  openProjector() {
+
+  }
+
   start():void {
     app.on('ready', this.createWindow);
+    ElectronUtil.registerGlobalShortcut(app, "F1", () => {
+      console.log("Hey, F1!!!");
+    })
 
     app.on('window-all-closed', function () {
       if (process.platform !== 'darwin') {
