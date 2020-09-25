@@ -1,5 +1,6 @@
 // tslint:disable/tslint:enable awaits you
 import {app, BrowserWindow, ipcMain, Menu, globalShortcut, remote, screen} from 'electron';
+import * as fs from 'fs';
 
 import * as url from 'url';
 import * as path from 'path';
@@ -140,6 +141,7 @@ export class ElectronApp {
       }
 
       this.db[arg.id] = arg;
+      this.savedb();
       event.returnValue = arg;
     });
     ipcMain.on('pconnection-getbyid', (event, arg: number) => {
@@ -152,9 +154,11 @@ export class ElectronApp {
     });
     ipcMain.on('pconnection-update', (event, arg: Pconnection) => {
       this.db[arg.id] = arg;
+      this.savedb();
     });
     ipcMain.on('pconnection-delete', (event, arg: number) => {
       delete this.db[arg.toString()];
+      this.savedb();
       event.returnValue = arg;
     });
   }
@@ -202,7 +206,26 @@ export class ElectronApp {
   }
 
   async start() {
+    this.loaddb();
     await this.registerApplicationLevelEvents();
     await this.registerCrudEvents();
+  }
+
+  savedb() {
+    const data = JSON.stringify(this.db);
+
+    if (!fs.existsSync(GlobalSettings.CONFIG.USER_DIR)){
+      fs.mkdirSync(GlobalSettings.CONFIG.USER_DIR);
+    }
+
+    // File write modes: https://stackoverflow.com/a/50174822
+    fs.writeFileSync(GlobalSettings.CONFIG.DB_FILE, data);
+  }
+
+  loaddb() {
+    if (fs.existsSync(GlobalSettings.CONFIG.DB_FILE)) {
+      let buffer = fs.readFileSync(GlobalSettings.CONFIG.DB_FILE);
+      this.db = JSON.parse(buffer.toString());
+    }
   }
 }
