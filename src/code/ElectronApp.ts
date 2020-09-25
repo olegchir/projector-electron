@@ -14,11 +14,9 @@ export class ElectronApp {
 
   constructor () {
     this.app = app
-    this.app["clazz"] = this
   }
 
   createWindow () {
-    const clazz = this["clazz"];
 
     this.mainWindow = new BrowserWindow({
       width: 800,
@@ -27,8 +25,6 @@ export class ElectronApp {
         nodeIntegration: true
       }
     })
-
-    clazz.mainWindow = this.mainWindow;
 
     this.mainWindow.loadURL(
       url.format({
@@ -66,7 +62,9 @@ export class ElectronApp {
   }
 
   start():void {
-    app.on('ready', this.createWindow);
+    app.on('ready', () => {
+      this.createWindow();
+    });
 
     ElectronUtil.registerGlobalShortcut(app,'Alt+F4', () => {
       this.quitApp();
