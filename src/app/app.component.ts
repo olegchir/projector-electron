@@ -27,4 +27,9 @@ export class AppComponent {
     console.log("Open a modal");
     this.ipc.send("openModal");
   }
+
+  connect(){
+    console.log("Connecting the Projector");
+    this.ipc.send("connect");
+  }
 }

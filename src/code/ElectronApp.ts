@@ -1,10 +1,12 @@
 // tslint:disable/tslint:enable awaits you
-import {app, BrowserWindow, ipcMain, Menu} from 'electron';
+import {app, BrowserWindow, ipcMain, Menu, globalShortcut, remote} from 'electron';
 
 import * as url from 'url';
 import * as path from 'path';
 import {Lang} from "./Lang";
 import {ElectronUtil} from "./ElectronUtil";
+import * as electron from "electron";
+import {GlobalSettings} from "./GlobalSettings";
 
 export class ElectronApp {
   public mainWindow:BrowserWindow;
@@ -25,6 +27,8 @@ export class ElectronApp {
         nodeIntegration: true
       }
     })
+
+    clazz.mainWindow = this.mainWindow;
 
     this.mainWindow.loadURL(
       url.format({
@@ -47,23 +51,38 @@ export class ElectronApp {
     });
   }
 
-  openModal(){
-    let modal = new BrowserWindow({ parent: this.mainWindow, modal: true, show: false });
-    modal.loadURL('https://facebook.com/olegchir');
-    modal.once('ready-to-show', () => {
-      modal.show()
-    })
+  connect(){
+    this.mainWindow.loadURL('http://void:8080/projector/?host=void&port=8887');
   }
 
-  openProjector() {
-
+  quitApp() {
+    // Two alternatives:
+    // This command will work even with Blocker: app.exit(0)
+    // Also we can do the same in the renderer process:
+    // let w = electron.remote.getCurrentWindow(); w.close();
+    // This is the normal way:
+    // app.quit()
+    app.exit(0);
   }
 
   start():void {
     app.on('ready', this.createWindow);
-    ElectronUtil.registerGlobalShortcut(app, "F1", () => {
-      console.log("Hey, F1!!!");
-    })
+
+    ElectronUtil.registerGlobalShortcut(app,'Alt+F4', () => {
+      this.quitApp();
+    });
+
+    if (GlobalSettings.CONFIG.FEATURE_TERMINATION_SHORTCUT) {
+      ElectronUtil.registerGlobalShortcut(app, 'CommandOrControl+Alt+Q', () => {
+        this.quitApp();
+      });
+    }
+
+    if (GlobalSettings.CONFIG.FEATURE_HELP_F1_SHORTCUT) {
+      ElectronUtil.registerGlobalShortcut(app, 'F1', () => {
+        this.mainWindow.webContents.sendInputEvent({keyCode: 'Q', type: 'keyDown', modifiers: ['control']});
+      });
+    }
 
     app.on('window-all-closed', function () {
       if (process.platform !== 'darwin') {
@@ -77,9 +96,9 @@ export class ElectronApp {
       }
     });
 
-    ipcMain.on('openModal', (event, arg) => {
-      console.log("openModal - main process")
-      this.openModal()
+    ipcMain.on('connect', (event, arg) => {
+      this.connect()
     });
+
   }
 }

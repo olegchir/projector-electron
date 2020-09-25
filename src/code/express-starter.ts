@@ -1,5 +1,6 @@
 import app from './ExpressApp'
 
+// Starter for the Express mode to debug UI
 export function start():void {
     const port = process.env.PORT || 3000
 
