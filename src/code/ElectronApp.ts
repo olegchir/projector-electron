@@ -6,6 +6,7 @@ import * as path from 'path';
 import {ElectronUtil} from "./ElectronUtil";
 import {GlobalSettings} from "./GlobalSettings";
 import {Logger} from "./Logger";
+import {Pconnection} from "../app/pconnection/pconnection";
 
 export class ElectronApp {
   public mainWindow:BrowserWindow;
@@ -14,6 +15,8 @@ export class ElectronApp {
   public mainWindowUrl: string;
   public mainWindowPrevUrl: string;
   public mainWindowNextUrl: string;
+
+  public db: { [id: number]: Pconnection} = {};
 
   public static readonly INDEX_URL = url.format({
     pathname: path.join(__dirname, `../static/index.html`),
@@ -116,6 +119,33 @@ export class ElectronApp {
     }
   }
 
+  async registerCrudEvents() {
+    ipcMain.on('pconnection-create', (event, arg: Pconnection) => {
+      let newid = 0;
+      let keys = Object.keys(this.db);
+      if (keys && keys.length > 0) {
+        let numbers = keys.map(e => parseInt(e));
+        newid = Math.max(...numbers) + 1;
+      }
+      arg.id = newid;
+      this.db[arg.id] = arg;
+      event.returnValue = arg;
+    });
+    ipcMain.on('pconnection-getbyid', (event, arg: number) => {
+      event.returnValue = this.db[arg];
+    });
+    ipcMain.on('pconnection-getall', (event) => {
+      event.returnValue = Object.values(this.db);
+    });
+    ipcMain.on('pconnection-update', (event, arg: Pconnection) => {
+      this.db[arg.id] = arg;
+    });
+    ipcMain.on('pconnection-delete', (event, arg: number) => {
+      delete this.db[arg.toString()];
+      event.returnValue = arg;
+    });
+  }
+
   async registerApplicationLevelEvents() {
     app.on('ready', async () => {
       await this.createWindow();
@@ -160,5 +190,6 @@ export class ElectronApp {
 
   async start() {
     await this.registerApplicationLevelEvents();
+    await this.registerCrudEvents();
   }
 }
