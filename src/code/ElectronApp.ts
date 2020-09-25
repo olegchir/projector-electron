@@ -48,7 +48,7 @@ export class ElectronApp {
   }
 
   connect(){
-    this.mainWindow.loadURL('http://void:8080/projector/?host=void&port=8887');
+    this.mainWindow.loadURL('http://void:8080/projector/?host=void&port=8887&blockClosing=false');
   }
 
   quitApp() {
