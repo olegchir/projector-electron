@@ -16,6 +16,7 @@ export class CreateComponent implements OnInit {
   pconnectionForm: FormGroup;
   pconnectionForUpdate: Pconnection;
   pconnectionForUpdateId: number;
+  isUpdate: boolean;
 
   constructor(
     public fb: FormBuilder,
@@ -29,6 +30,8 @@ export class CreateComponent implements OnInit {
     this.pconnectionForUpdateId = this.route.snapshot.params.pconnectionId;
     console.log(this.pconnectionForUpdateId);
     if ( typeof this.pconnectionForUpdateId !== 'undefined' ) {
+      this.isUpdate = true;
+
       this.pconnectionService.getById(this.pconnectionForUpdateId).subscribe(pcon => {
         console.log(pcon)
         this.pconnectionForUpdate = pcon;
@@ -43,6 +46,8 @@ export class CreateComponent implements OnInit {
 
       })
     } else {
+      this.isUpdate = false;
+
       this.pconnectionForm = this.fb.group({
         host: ['void'],
         port: 8080,

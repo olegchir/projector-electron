@@ -25,10 +25,10 @@
         </thead>
         <tbody>
         <tr *ngFor="let pconnection of pconnections"  scope="row">
-          <td>{{pconnection.id}}</td>
-          <td>{{pconnection.host}}</td>
-          <td>{{pconnection.port}}</td>
-          <td>{{pconnection.wsport}}</td>
+          <td class="align-middle">{{pconnection.id}}</td>
+          <td class="align-middle">{{pconnection.host}}</td>
+          <td class="align-middle">{{pconnection.port}}</td>
+          <td class="align-middle">{{pconnection.wsport}}</td>
           <td class='hidden'>{{pconnection.password}}</td>
           <td>
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
