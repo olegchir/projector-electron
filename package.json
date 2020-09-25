@@ -21,7 +21,7 @@
     "nglint": "ng lint",
     "nge2e": "ng e2e",
     "ngebuild": "ng build --base-href ./",
-    "ngewatch": "ng build --base-href ./ --watch",
+    "ngewatch": "ng build --base-href ./ --watch=true --verbose=true",
     "ea": "ng build --base-href ./ && electron .",
     "e": "electron ."
   },

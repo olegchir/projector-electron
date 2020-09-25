@@ -1,9 +1,13 @@
 import { ElectronApp } from './code/ElectronApp'
 
-export function start():void {
-    const controller = new ElectronApp();
-    const app = controller.app;
-    controller.start();
+export async function start() {
+  const controller = new ElectronApp();
+  const app = controller.app;
+  await controller.start();
 }
 
-start();
+(async function() {
+  await start();
+}());
+
+

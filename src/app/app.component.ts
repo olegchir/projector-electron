@@ -7,7 +7,7 @@ import { IpcRenderer } from 'electron';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'projector-electron';
+  title = 'Projector';
 
   private ipc: IpcRenderer;
   constructor(){
@@ -23,13 +23,8 @@ export class AppComponent {
     }
   }
 
-  openModal(){
-    console.log("Open a modal");
-    this.ipc.send("openModal");
-  }
-
   connect(){
-    console.log("Connecting the Projector");
+    console.log("Connecting to the Projector Server");
     this.ipc.send("connect");
   }
 }

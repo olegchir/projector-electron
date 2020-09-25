@@ -1,5 +1,5 @@
 // tslint:disable/tslint:enable awaits you
-import {app, BrowserWindow, ipcMain, Menu, globalShortcut, remote} from 'electron';
+import {app, BrowserWindow, ipcMain, Menu, globalShortcut, remote, screen} from 'electron';
 
 import * as url from 'url';
 import * as path from 'path';
@@ -33,10 +33,11 @@ export class ElectronApp {
   }
 
   async createWindow() {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize
 
     this.mainWindow = new BrowserWindow({
-      width: 800,
-      height: 600,
+      width: width,
+      height: height,
       webPreferences: {
         nodeIntegration: true
       }
@@ -69,10 +70,6 @@ export class ElectronApp {
     });
 
     await this.navigateMainWindow(ElectronApp.INDEX_URL);
-
-    this.mainWindow.webContents.openDevTools();
-
-    ElectronUtil.disableAllStandardShortcuts();
   }
 
   connect(){
@@ -89,10 +86,8 @@ export class ElectronApp {
     app.exit(0);
   }
 
-  start():void {
-    app.on('ready', () => {
-      this.createWindow();
-    });
+  async registerGlobalShortcuts() {
+    ElectronUtil.disableAllStandardShortcuts();
 
     ElectronUtil.registerGlobalShortcut(app,'Alt+F4', () => {
       this.quitApp();
@@ -119,22 +114,36 @@ export class ElectronApp {
         this.mainWindow.webContents.sendInputEvent({keyCode: 'Q', type: 'keyDown', modifiers: ['control']});
       });
     }
+  }
+
+  async registerApplicationLevelEvents() {
+    app.on('ready', async () => {
+      await this.createWindow();
+      await this.registerGlobalShortcuts();
+
+      if (GlobalSettings.CONFIG.FEATURE_DEV_TOOLS) {
+        this.mainWindow.webContents.openDevTools();
+      }
+    });
 
     app.on('window-all-closed', function () {
       if (process.platform !== 'darwin') {
-          app.quit()
+        app.quit()
       }
     });
 
     app.on('activate', async function () {
       if (this.mainWindow === null) {
-          await this.createWindow()
+        await this.createWindow()
       }
     });
 
     ipcMain.on('connect', (event, arg) => {
       this.connect()
     });
+  }
 
+  async start() {
+    await this.registerApplicationLevelEvents();
   }
 }
