@@ -10,7 +10,7 @@ const routes: Routes = [
   {path: 'pconnection/home', component: HomeComponent},
   {path: 'pconnection/details/:pconnectionId', component: DetailsComponent},
   {path: 'pconnection/create', component: CreateComponent},
-  {path: 'pconnection/update/:pconnectionId', component: UpdateComponent}
+  {path: 'pconnection/create/:pconnectionId', component: CreateComponent}
 ];
 
 @NgModule({

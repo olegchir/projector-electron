@@ -32,7 +32,7 @@
           <td class='hidden'>{{pconnection.password}}</td>
           <td>
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <button type="button" [routerLink]="['/pconnection/update/', pconnection.id]" class="btn btn-secondary">Update</button>
+            <button type="button" [routerLink]="['/pconnection/create/', pconnection.id]" class="btn btn-secondary">Update</button>
             <button type="button" (click)="delete(pconnection.id);" class="btn btn-secondary">Remove</button>
             <button type="button" (click)="connect(pconnection.id);" class="btn btn-main">Connect</button>
             </div>

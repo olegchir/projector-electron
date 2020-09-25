@@ -14,7 +14,6 @@ export class AppComponent {
     if ((<any>window).require) {
       try {
         this.ipc = (<any>window).require('electron').ipcRenderer;
-        console.log("ipc created")
       } catch (e) {
         throw e;
       }

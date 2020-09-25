@@ -122,18 +122,26 @@ export class ElectronApp {
 
   async registerCrudEvents() {
     ipcMain.on('pconnection-create', (event, arg: Pconnection) => {
-      let newid = 0;
-      let keys = Object.keys(this.db);
-      if (keys && keys.length > 0) {
-        let numbers = keys.map(e => parseInt(e));
-        newid = Math.max(...numbers) + 1;
+
+      if ( typeof arg.id !== 'undefined') {
+        Logger.debug(`Updating entity ${arg.id}`)
+      } else {
+        let newid = 0;
+        let keys = Object.keys(this.db);
+        if (keys && keys.length > 0) {
+          let numbers = keys.map(e => parseInt(e));
+          newid = Math.max(...numbers) + 1;
+        }
+        arg.id = newid;
       }
-      arg.id = newid;
+
       this.db[arg.id] = arg;
       event.returnValue = arg;
     });
     ipcMain.on('pconnection-getbyid', (event, arg: number) => {
-      event.returnValue = this.db[arg];
+      console.log(arg)
+      let result = this.db[arg.toString()];
+      event.returnValue = result;
     });
     ipcMain.on('pconnection-getall', (event) => {
       event.returnValue = Object.values(this.db);
