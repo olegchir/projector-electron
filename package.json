@@ -23,7 +23,9 @@
     "ngebuild": "ng build --base-href ./",
     "ngewatch": "ng build --base-href ./ --watch=true --verbose=true",
     "ea": "ng build --base-href ./ && electron .",
-    "e": "electron ."
+    "e": "electron .",
+    "package": "electron-packager --executable-name=projector --out=./out --overwrite --icon=./src/assets/img/electron-icon.ico .",
+    "package-mac": "electron-packager --executable-name=projector --out=./out --overwrite --icon=./src/assets/img/electron-icon.icns ."
   },
   "author": "Oleg Chirukhin",
   "license": "UPL-1.0",
@@ -54,6 +56,7 @@
     "@types/node": "^12.12.62",
     "codelyzer": "^5.2.2",
     "electron": "^10.1.2",
+    "electron-packager": "^15.1.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
