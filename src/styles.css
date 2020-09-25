@@ -68,6 +68,13 @@ body {
   margin-bottom: 0;
 }
 
+.stdhead-brand-img {
+  margin-bottom: 0;
+  width: 42px;
+  margin-right: 10px;
+}
+
+
 .nav-stdhead .nav-link {
   padding: .25rem 0;
   font-weight: 700;
