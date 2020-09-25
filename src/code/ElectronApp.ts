@@ -10,7 +10,11 @@ import {Logger} from "./Logger";
 export class ElectronApp {
   public mainWindow:BrowserWindow;
   public app:Electron.App;
+
   public mainWindowUrl: string;
+  public mainWindowPrevUrl: string;
+  public mainWindowNextUrl: string;
+
   public static readonly INDEX_URL = url.format({
     pathname: path.join(__dirname, `../static/index.html`),
     protocol: "file:",
@@ -22,7 +26,9 @@ export class ElectronApp {
   }
 
   async navigateMainWindow(url: string) {
+    this.mainWindowNextUrl = url
     await this.mainWindow.loadURL(url);
+    this.mainWindowPrevUrl = this.mainWindowUrl
     this.mainWindowUrl = url
   }
 
@@ -39,7 +45,7 @@ export class ElectronApp {
     // It's better to use navigation-entry-commited
     // But it is still private: https://github.com/electron/electron/issues/10566
     // "did-navigate" is for the main frame and "did-navigate-in-page" is for multiple windows
-    this.mainWindow["webContents"].on('did-navigate-in-page', (event: Event,
+    this.mainWindow.webContents.on('did-navigate-in-page', (event: Event,
                                                                url: string,
                                                                isMainFrame: boolean,
                                                                frameProcessId: number,
@@ -49,19 +55,24 @@ export class ElectronApp {
       }
     });
 
-    await this.navigateMainWindow(ElectronApp.INDEX_URL);
-
-    this.mainWindow.webContents.openDevTools();
-
-    ElectronUtil.disableAllStandardShortcuts();
+    this.mainWindow.webContents.on('did-fail-load', () => {
+      Logger.debug(`Loading failed, fallback activated: ${this.mainWindowNextUrl} -> ${this.mainWindowUrl}`);
+      this.navigateMainWindow(this.mainWindowUrl);
+    });
 
     this.mainWindow.webContents.on('did-finish-load', () => {
-      this.mainWindow.webContents.send('test', 'This is a test');
+      this.mainWindow.webContents.send('info', 'loading finished');
     });
 
     this.mainWindow.on('closed', function () {
       this.mainWindow = null;
     });
+
+    await this.navigateMainWindow(ElectronApp.INDEX_URL);
+
+    this.mainWindow.webContents.openDevTools();
+
+    ElectronUtil.disableAllStandardShortcuts();
   }
 
   connect(){
