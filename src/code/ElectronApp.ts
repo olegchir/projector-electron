@@ -141,6 +141,21 @@ export class ElectronApp {
     ipcMain.on('connect', (event, arg) => {
       this.connect()
     });
+
+    // Links inside the HTML should open a standard web browser
+    // Strange hacks on how to this are here: https://github.com/electron/electron/issues/1344
+    app.on('web-contents-created', (e, contents) => {
+      contents.on('new-window', (e, url) => {
+        e.preventDefault();
+        require('open')(url);
+      });
+      contents.on('will-navigate', (e, url) => {
+        if (url !== contents.getURL()) {
+          e.preventDefault()
+          require('open')(url);
+        }
+      });
+    });
   }
 
   async start() {
