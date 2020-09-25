@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Pconnection} from "../pconnection";
 import {PconnectionService} from "../pconnection.service";
 import {NavigationEnd, Router} from "@angular/router";
+import {IpcService} from "../../ipc.service";
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,9 @@ export class HomeComponent implements OnInit {
   pconnections: Pconnection[] = [];
   mySubscription: any;
 
-  constructor(public pconnectionService: PconnectionService, private router: Router) {
+  constructor(public pconnectionService: PconnectionService,
+              private router: Router,
+              public ipc: IpcService) {
 
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -43,6 +46,10 @@ export class HomeComponent implements OnInit {
   delete(id: number) {
     this.pconnectionService.delete(id);
     this.router.navigateByUrl('pconnection/home')
+  }
+
+  connect(id: number) {
+    this.ipc.send("connect", id);
   }
 
 }

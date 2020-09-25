@@ -11,13 +11,22 @@ a:hover {
 }
 
 /* Custom default button */
+.btn-main,
+.btn-main:hover,
+.btn-main:focus {
+  color: #333;
+  text-shadow: none; /* Prevent inheritance from `body` */
+  background-color: #fff;
+  border: .05rem solid #fff;
+}
+
 .btn-secondary,
 .btn-secondary:hover,
 .btn-secondary:focus {
   color: #333;
   text-shadow: none; /* Prevent inheritance from `body` */
-  background-color: #fff;
-  border: .05rem solid #fff;
+  background-color: #6c757d;
+  border: .05rem solid;
 }
 
 
@@ -44,7 +53,7 @@ body {
 }
 
 .cover-container {
-  max-width: 42em;
+  max-width: 84em;
 }
 
 
@@ -108,4 +117,13 @@ body {
  */
 .stdfoot {
   color: rgba(255, 255, 255, .5);
+}
+
+.cont-md {
+  min-width: 720px;
+}
+
+.hidden {
+  display:none;
+  visibility:hidden;
 }

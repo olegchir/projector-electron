@@ -8,8 +8,7 @@ const routes: Routes = [{
 }];
 
 const rootRoutes = RouterModule.forRoot(routes)
-
-console.log(rootRoutes);
+// console.log(rootRoutes);
 
 @NgModule({
   imports: [rootRoutes],

@@ -1,27 +1,45 @@
-<div>
-  <h1>Connections</h1>
-  <button type="button" [routerLink]="['/pconnection/create/']">Create new connection</button>
-  <table class="table">
-    <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Host</th>
-      <th scope="col">Port</th>
-      <th scope="col">WS Port</th>
-      <th scope="col">Password</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let pconnection of pconnections"  scope="row">
-      <td>{{pconnection.id}}</td>
-      <td>{{pconnection.host}}</td>
-      <td>{{pconnection.port}}</td>
-      <td>{{pconnection.password}}</td>
-      <td>
-        <button type="button" [routerLink]="['/pconnection/update/', pconnection.id]">Update</button>
-        <button type="button" (click)="delete(pconnection.id);">Remove</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<div class="container cont-md">
+  <div *ngIf="pconnections.length > 0" class="row">
+    <div class="col-md-12">
+      <h1>Connections</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12" style="padding-bottom: 20px;">
+      <button type="button" [routerLink]="['/pconnection/create/']" class="btn btn-lg btn-main">New connection</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table *ngIf="pconnections.length > 0" class="table table-dark">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Host</th>
+          <th scope="col">Port</th>
+          <th scope="col">WS Port</th>
+          <th scope="col" class='hidden'>Password</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let pconnection of pconnections"  scope="row">
+          <td>{{pconnection.id}}</td>
+          <td>{{pconnection.host}}</td>
+          <td>{{pconnection.port}}</td>
+          <td>{{pconnection.wsport}}</td>
+          <td class='hidden'>{{pconnection.password}}</td>
+          <td>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <button type="button" [routerLink]="['/pconnection/update/', pconnection.id]" class="btn btn-secondary">Update</button>
+            <button type="button" (click)="delete(pconnection.id);" class="btn btn-secondary">Remove</button>
+            <button type="button" (click)="connect(pconnection.id);" class="btn btn-main">Connect</button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

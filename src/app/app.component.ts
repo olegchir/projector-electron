@@ -23,8 +23,5 @@ export class AppComponent {
     }
   }
 
-  connect(){
-    console.log("Connecting to the Projector Server");
-    this.ipc.send("connect");
-  }
+
 }

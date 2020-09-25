@@ -75,8 +75,9 @@ export class ElectronApp {
     await this.navigateMainWindow(ElectronApp.INDEX_URL);
   }
 
-  connect(){
-    this.navigateMainWindow('http://void:8080/projector/?host=void&port=8887&blockClosing=false');
+  connect(id: number){
+    var pcon = this.db[id.toString()];
+    this.navigateMainWindow(`http://${pcon.host}:${pcon.port}/projector/?host=/${pcon.host}&port=${pcon.wsport}&blockClosing=false`);
   }
 
   quitApp() {
@@ -169,7 +170,7 @@ export class ElectronApp {
     });
 
     ipcMain.on('connect', (event, arg) => {
-      this.connect()
+      this.connect(arg)
     });
 
     // Links inside the HTML should open a standard web browser
