@@ -3,20 +3,30 @@ import {app, BrowserWindow, ipcMain, Menu, globalShortcut, remote} from 'electro
 
 import * as url from 'url';
 import * as path from 'path';
-import {Lang} from "./Lang";
 import {ElectronUtil} from "./ElectronUtil";
-import * as electron from "electron";
 import {GlobalSettings} from "./GlobalSettings";
+import {Logger} from "./Logger";
 
 export class ElectronApp {
   public mainWindow:BrowserWindow;
   public app:Electron.App;
+  public mainWindowUrl: string;
+  public static readonly INDEX_URL = url.format({
+    pathname: path.join(__dirname, `../static/index.html`),
+    protocol: "file:",
+    slashes: true
+  });
 
   constructor () {
     this.app = app
   }
 
-  createWindow () {
+  async navigateMainWindow(url: string) {
+    await this.mainWindow.loadURL(url);
+    this.mainWindowUrl = url
+  }
+
+  async createWindow() {
 
     this.mainWindow = new BrowserWindow({
       width: 800,
@@ -26,20 +36,27 @@ export class ElectronApp {
       }
     })
 
-    this.mainWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, `../static/index.html`),
-        protocol: "file:",
-        slashes: true
-      })
-    );
+    // It's better to use navigation-entry-commited
+    // But it is still private: https://github.com/electron/electron/issues/10566
+    // "did-navigate" is for the main frame and "did-navigate-in-page" is for multiple windows
+    this.mainWindow["webContents"].on('did-navigate-in-page', (event: Event,
+                                                               url: string,
+                                                               isMainFrame: boolean,
+                                                               frameProcessId: number,
+                                                               frameRoutingId: number) => {
+      if (isMainFrame) {
+        Logger.debug(`Navigation: go to ${url}`)
+      }
+    });
+
+    await this.navigateMainWindow(ElectronApp.INDEX_URL);
 
     this.mainWindow.webContents.openDevTools();
 
     ElectronUtil.disableAllStandardShortcuts();
 
     this.mainWindow.webContents.on('did-finish-load', () => {
-      this.mainWindow.webContents.send('test','This is a test');
+      this.mainWindow.webContents.send('test', 'This is a test');
     });
 
     this.mainWindow.on('closed', function () {
@@ -48,7 +65,7 @@ export class ElectronApp {
   }
 
   connect(){
-    this.mainWindow.loadURL('http://void:8080/projector/?host=void&port=8887&blockClosing=false');
+    this.navigateMainWindow('http://void:8080/projector/?host=void&port=8887&blockClosing=false');
   }
 
   quitApp() {
@@ -70,6 +87,16 @@ export class ElectronApp {
       this.quitApp();
     });
 
+    if (GlobalSettings.CONFIG.FEATURE_DEV_REFRESH_SHORTCUT) {
+      // See this interesting hack: https://github.com/electron/electron/issues/14978
+      // History API is a bit clumsy, so we just emulate it with local variables
+      ElectronUtil.registerGlobalShortcut(app, 'Ctrl+R', async () => {
+        //this.mainWindow.reload();
+        await this.navigateMainWindow(this.mainWindowUrl);
+        Logger.debug("Reloaded");
+      });
+    }
+
     if (GlobalSettings.CONFIG.FEATURE_TERMINATION_SHORTCUT) {
       ElectronUtil.registerGlobalShortcut(app, 'CommandOrControl+Alt+Q', () => {
         this.quitApp();
@@ -88,9 +115,9 @@ export class ElectronApp {
       }
     });
 
-    app.on('activate', function () {
+    app.on('activate', async function () {
       if (this.mainWindow === null) {
-          this.createWindow()
+          await this.createWindow()
       }
     });
 
