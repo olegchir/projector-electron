@@ -62,8 +62,9 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 
-// For latest TypeScript: 
+// For latest TypeScript:
 // https://github.com/angular/angular-cli/issues/16071#issuecomment-553484744
+// @ts-ignore
 var __importDefault = (this && "__importDefault" in this) || function (mod:any) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }

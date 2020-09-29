@@ -14,9 +14,9 @@
     "test": "node ./dist/eprojector-test.js",
     "alive": "echo \"Still alive!\" && exit 1",
     "ng": "ng",
-    "ngserve": "ng serve ./",
-    "ngbuild": "ng build ./",
-    "ngwatch": "ng build ./ --watch",
+    "ngserve": "ng serve",
+    "ngbuild": "ng build",
+    "ngwatch": "ng build --watch",
     "ngtest": "ng test",
     "nglint": "ng lint",
     "nge2e": "ng e2e",
@@ -25,7 +25,8 @@
     "ea": "ng build --base-href ./ && electron .",
     "e": "electron .",
     "package": "electron-packager --executable-name=projector --out=./out --overwrite --icon=./src/assets/img/electron-icon.ico .",
-    "package-mac": "electron-packager --executable-name=projector --out=./out --overwrite --icon=./src/assets/img/electron-icon.icns ."
+    "package-mac": "electron-packager --executable-name=projector --out=./out --overwrite --icon=./src/assets/img/electron-icon.icns .",
+    "build-all": "npm run build && npm run ngbuild"
   },
   "author": "Oleg Chirukhin",
   "license": "UPL-1.0",
