@@ -78,7 +78,7 @@ export class ElectronApp {
 
   connect(id: number){
     var pcon = this.db[id.toString()];
-    var url = `http://${pcon.host}:${pcon.port}/projector/?host=${pcon.host}&port=${pcon.wsport}&blockClosing=false`;
+    var url = `http://${pcon.host}:${pcon.port}/projector/?host=${pcon.host}&port=${pcon.wsport}&blockClosing=false&notSecureWarning=false`;
     if ( typeof pcon.password !== 'undefined' && pcon.password.trim()) {
       url += `&token=${pcon.password}`;
     }
